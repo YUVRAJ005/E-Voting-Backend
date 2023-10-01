@@ -1,4 +1,4 @@
-const voterID = new mongoose.Schema({
+const voterIDSchema = new mongoose.Schema({
     name : {
         type:String,
         required: true
@@ -24,3 +24,5 @@ const voterID = new mongoose.Schema({
         required: true
     }
 })
+
+const Voter  = mongoose.model("voter", voterIDSchema);
