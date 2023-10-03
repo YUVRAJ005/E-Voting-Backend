@@ -13,6 +13,9 @@ const voterIDSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    age : {
+        type: Number,
+    },
     phone : {
         type:Number,
         required: true,
