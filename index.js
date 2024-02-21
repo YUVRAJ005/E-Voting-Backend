@@ -2,7 +2,6 @@ require('dotenv').config();
 const cors = require("cors")
 const { auth } = require('express-openid-connect');
 const express = require("express");
-const mongoose = require("mongoose");
 const bodyParser = require('body-parser');
 const app = express();
 
@@ -28,19 +27,8 @@ const prop = {
 
   app.use(auth(prop));
 
-mongoose.connect(process.env['mongoDBURL'], {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-})
-.then(() => {
-    console.log("Database Connected");
-    app.listen(process.env['PORT'], function () {
-        console.log("Server Started On Port : " + process.env['PORT']);
-    });
-})
-.catch((err) => console.log(err));
 
-/*app.listen(process.env['PORT'], function () {
+app.listen(process.env['PORT'], function () {
     console.log("Server Started On Port : " + process.env['PORT']);
-});*/
+});
 

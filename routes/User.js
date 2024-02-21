@@ -1,13 +1,29 @@
+require('dotenv').config();
 const express = require("express");
 const router = express.Router();
-const Voter = require("../models/Voter");
+
+async function getData(cid) {
+    try {
+       let fetchurl = "https://" + process.env['PINATA_GATEWAY'] + "/ipfs/" + cid ;
+      const res = await fetch(
+        fetchurl,
+      );
+      const resData = await res.text();
+      //console.log(resData);
+      return resData;
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
 router.get('/profile/:id', async (req, res) => {
     
-    console.log(req.params.id);
+    //console.log("This is ID  - " + req.params.id);
     try{
-        const usr = await Voter.find({ email: req.params.id});
-        res.status(200).send(usr[0]);
+        const data = await getData(req.params.id);
+        console.log(data)
+
+        res.status(200).send(data);
     }
     catch(err){
         res.status(404).send(err);
