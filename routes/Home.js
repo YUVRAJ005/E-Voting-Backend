@@ -1,7 +1,6 @@
 require('dotenv').config();
 const express = require("express");
 const router = express.Router();
-//const Voter = require("../models/Voter");
 const axios = require('axios');
 var generator = require('generate-password');
 var request = require("request");
