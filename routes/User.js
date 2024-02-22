@@ -21,7 +21,7 @@ router.get('/profile/:id', async (req, res) => {
     //console.log("This is ID  - " + req.params.id);
     try{
         const data = await getData(req.params.id);
-        console.log(data)
+        //console.log(data)
 
         res.status(200).send(data);
     }

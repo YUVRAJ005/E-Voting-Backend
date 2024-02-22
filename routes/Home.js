@@ -40,82 +40,79 @@ router.post('/voterIdApplication', async (req, res) => {
       pincode: req.body.pincode
     }
 
+    let res = await saveData(voter_data)
+    console.log('Voter data added successfully to IPFS')
+    console.log('CID ' + res.IpfsHash)
 
-  //   let res = await saveData(voter_data)
-  //   console.log('Voter data added successfully to IPFS')
-  //   console.log('CID ' + res.IpfsHash)
+    // var password = generator.generate({
+    //   length: 10,
+    //   numbers: true,
+    //   symbols: true,
+    //   uppercase: true,
+    //   lowercase: true,
+    // });
 
+    //console.log("Rand Pass generated for user is : " + password);
 
-
-  //   // var password = generator.generate({
-  //   //   length: 10,
-  //   //   numbers: true,
-  //   //   symbols: true,
-  //   //   uppercase: true,
-  //   //   lowercase: true,
-  //   // });
-
-  //   //console.log("Rand Pass generated for user is : " + password);
-
-  //   let data = JSON.stringify({
-  //     "email": req.body.email,
-  //     "blocked": false,
-  //     "given_name": "NA",
-  //     "family_name": "NA",
-  //     "name": req.body.name,
-  //     "user_id": req.body.email,
-  //     "connection": "Username-Password-Authentication",
-  //     "password": req.body.password,
-  //     "verify_email": true,
-  //     //"phone_number": "string",
-  //     //"user_metadata": {},
-  //     "blocked": false,
-  //     "email_verified": false,
-  //     //"phone_verified": false,
-  //     //"app_metadata": {},
-  //     "nickname": res.IpfsHash,
-  //     //"picture": "NA",
-  //     "username": res.IpfsHash
-  //   });
+    let data = JSON.stringify({
+      "email": req.body.email,
+      "blocked": false,
+      "given_name": "NA",
+      "family_name": "NA",
+      "name": req.body.name,
+      "user_id": req.body.email,
+      "connection": "Username-Password-Authentication",
+      "password": req.body.password,
+      "verify_email": true,
+      //"phone_number": "string",
+      //"user_metadata": {},
+      "blocked": false,
+      "email_verified": false,
+      //"phone_verified": false,
+      //"app_metadata": {},
+      "nickname": res.IpfsHash,
+      //"picture": "NA",
+      "username": res.IpfsHash
+    });
 
 
-  //   var options = {
-  //     method: 'POST',
-  //     url: 'https://dev-ug5wbcmf8y8ide7v.us.auth0.com/oauth/token',
-  //     headers: { 'content-type': 'application/json' },
-  //     body: process.env['AUTH0_TOKEN']
-  //   };
+    var options = {
+      method: 'POST',
+      url: 'https://dev-ug5wbcmf8y8ide7v.us.auth0.com/oauth/token',
+      headers: { 'content-type': 'application/json' },
+      body: process.env['AUTH0_TOKEN']
+    };
 
-  //   request(options, function (error, response, body) {
-  //     if (error) throw new Error(error);
-  //     const obj = JSON.parse(body);
-  //     const access_token = obj.access_token;
-  //     const token_type = obj.token_type;
-  //     let authorize = token_type + ' ' + access_token;
+    request(options, function (error, response, body) {
+      if (error) throw new Error(error);
+      const obj = JSON.parse(body);
+      const access_token = obj.access_token;
+      const token_type = obj.token_type;
+      let authorize = token_type + ' ' + access_token;
 
-  //     let config = {
-  //       method: 'post',
-  //       maxBodyLength: Infinity,
-  //       url: 'https://dev-ug5wbcmf8y8ide7v.us.auth0.com/api/v2/users',
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //         'Accept': 'application/json',
-  //         'Authorization': authorize
-  //       },
-  //       data: data
-  //     };
+      let config = {
+        method: 'post',
+        maxBodyLength: Infinity,
+        url: 'https://dev-ug5wbcmf8y8ide7v.us.auth0.com/api/v2/users',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': authorize
+        },
+        data: data
+      };
 
-  //     axios.request(config)
-  //       .then((response) => {
-  //         console.log("User Registered Successfully");
-  //         //res.status(200).send("User Registered Successfully");
-  //       })
-  //       .catch((error) => {
-  //         console.log(error);
-  //         //res.status(451).send("User Registration Failed!");
-  //       });
+      axios.request(config)
+        .then((response) => {
+          console.log("User Registered Successfully");
+          //res.status(200).send("User Registered Successfully");
+        })
+        .catch((error) => {
+          console.log(error);
+          //res.status(451).send("User Registration Failed!");
+        });
 
-  //   });
+    });
 
    }
 
