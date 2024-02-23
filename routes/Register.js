@@ -14,7 +14,7 @@ async function saveData(data) {
 }
 
 
-router.post('/voterIdApplication', async (req, res) => {
+router.post('/voterRegistration', async (req, res) => {
 
   //console.log(req.body);
 
