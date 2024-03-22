@@ -17,6 +17,5 @@ app.use("/user", voterDataRoute);
 
 
 app.listen(process.env['PORT'], function () {
-    console.log("Server Started On Port : " + process.env['PORT']);
+    console.log("*    *    *\nServer Started On Port : " + process.env['PORT']+"\n*    *    *");
 });
-

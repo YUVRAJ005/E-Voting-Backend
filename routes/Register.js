@@ -4,15 +4,36 @@ const router = express.Router();
 const axios = require('axios');
 var generator = require('generate-password');
 var request = require("request");
+const { randomBytes, createCipheriv, createDecipheriv } = require('crypto');
 const pinataSDK = require('@pinata/sdk');
 const pinata = new pinataSDK({ pinataJWTKey: process.env['PINATA_JWT'] });
 
-async function saveData(data) {
-  const res = await pinata.pinJSONToIPFS(data)
-  //console.log(res)
-  return res
+const method = process.env['ENCRYPTION_METHOD'];
+const key = Buffer.from(process.env['SECRET_KEY'], 'hex');
+const iv = Buffer.from(process.env['SECRET_IV'], 'hex');
+
+async function encrypt(text) {
+  const cipher = createCipheriv(method, key, iv);
+  let encrypted = cipher.update(text, 'utf8', 'hex');
+  encrypted += cipher.final('hex');
+  return encrypted;
 }
 
+async function decrypt(encryptedData) {
+  const decipher = createDecipheriv(method, key, iv);
+  let decrypted = decipher.update(encryptedData, 'hex', 'utf8');
+  decrypted += decipher.final('utf8');
+  return decrypted;
+}
+
+
+async function saveData(data) {
+  console.log('Saving voter data to IPFS ...')
+  const res = await pinata.pinJSONToIPFS(data)
+  console.log('Voter data saved successfully to IPFS')
+  console.log('CID ' + res.IpfsHash)
+  return res
+}
 
 router.post('/voterRegistration', async (req, res) => {
 
@@ -26,23 +47,27 @@ router.post('/voterRegistration', async (req, res) => {
 
 
   let cage = Math.abs((new Date(currentDate) - new Date(req.body.dob)) / (1000 * 60 * 365 * 60 * 24));
-  cage = 50
+  var vage = Math.floor(cage);
   if (cage > 17) {
 
+    console.log("Received Voter Data : " + JSON.stringify(req.body));
+    console.log("Data Encryption In Progress ...")
+
     let voter_data = {
-      name: req.body.name,
-      gender: req.body.gender,
-      dob: req.body.dob,
-      age: Math.floor(cage),
-      phone: req.body.phone,
-      email: req.body.email,
-      address: req.body.address,
-      pincode: req.body.pincode
+      name: await encrypt(req.body.name),
+      gender: await encrypt(req.body.gender),
+      dob: await encrypt(req.body.dob),
+      age: await encrypt(vage.toString()),
+      phone: await encrypt(req.body.phone.toString()),
+      email: await encrypt(req.body.email),
+      address: await encrypt(req.body.address),
+      pincode: await encrypt(req.body.pincode.toString())
     }
 
+    console.log("Data Encrypted Successfully")
+    console.log(voter_data)
+
     let res = await saveData(voter_data)
-    console.log('Voter data added successfully to IPFS')
-    console.log('CID ' + res.IpfsHash)
 
     // var password = generator.generate({
     //   length: 10,
@@ -104,7 +129,8 @@ router.post('/voterRegistration', async (req, res) => {
 
       axios.request(config)
         .then((response) => {
-          console.log("User Registered Successfully");
+          console.log("Voter Registered Successfully");
+          console.log("*    *    *");
           //res.status(200).send("User Registered Successfully");
         })
         .catch((error) => {
@@ -114,9 +140,9 @@ router.post('/voterRegistration', async (req, res) => {
 
     });
 
-   }
+  }
 
-  res.status(200).send("User Registered Successfully");
+  res.status(200).send("Voter Registered Successfully");
 
 
 
